@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getAnnouncement, formatTime } from './timer-logic.js';
+import { getAnnouncement, formatTime, formatMinutes } from './timer-logic.js';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -138,26 +138,22 @@ describe('getAnnouncement — ≤60s countdown', () => {
     expect(getAnnouncement(61, 60, 3600)).toBe('Còn 1 phút');
   });
 
-  it('announces "Còn 59 giây" at remaining=59', () => {
-    expect(getAnnouncement(60, 59, 3600)).toBe('Còn 59 giây');
+  it('announces "59" at remaining=59', () => {
+    expect(getAnnouncement(60, 59, 3600)).toBe('59');
   });
 
-  it('announces "Còn 30 giây" at remaining=30', () => {
-    expect(getAnnouncement(31, 30, 3600)).toBe('Còn 30 giây');
+  it('announces "30" at remaining=30', () => {
+    expect(getAnnouncement(31, 30, 3600)).toBe('30');
   });
 
-  it('announces "Còn 1 giây" at remaining=1', () => {
-    expect(getAnnouncement(2, 1, 3600)).toBe('Còn 1 giây');
+  it('announces "1" at remaining=1', () => {
+    expect(getAnnouncement(2, 1, 3600)).toBe('1');
   });
 
-  it('fires every second from 59 down to 1', () => {
+  it('fires every second from 59 down to 1 as plain numbers', () => {
     for (let s = 59; s >= 1; s--) {
       const text = getAnnouncement(s + 1, s, 3600);
-      if (s === 60) {
-        expect(text).toBe('Còn 1 phút');
-      } else {
-        expect(text).toBe(`Còn ${s} giây`);
-      }
+      expect(text).toBe(String(s));
     }
   });
 });
@@ -200,8 +196,8 @@ describe('getAnnouncement — full timer simulation', () => {
 
     // 60s countdown
     expect(texts).toContain('Còn 1 phút');
-    expect(texts).toContain('Còn 59 giây');
-    expect(texts).toContain('Còn 1 giây');
+    expect(texts).toContain('59');
+    expect(texts).toContain('1');
     expect(texts).toContain('Hết giờ!');
   });
 
@@ -232,14 +228,14 @@ describe('getAnnouncement — full timer simulation', () => {
     expect(texts).toContain('Còn 3 phút');
     expect(texts).toContain('Còn 2 phút');
     expect(texts).toContain('Còn 1 phút');
-    expect(texts).toContain('Còn 59 giây');
+    expect(texts).toContain('59');
     expect(texts).toContain('Hết giờ!');
   });
 
   it('each 60s countdown second appears exactly once in a 60-min run', () => {
     const all = collectAnnouncements(3600);
     for (let s = 59; s >= 1; s--) {
-      const matches = all.filter(a => a.text === `Còn ${s} giây`);
+      const matches = all.filter(a => a.text === String(s));
       expect(matches).toHaveLength(1);
     }
   });
@@ -251,5 +247,29 @@ describe('getAnnouncement — full timer simulation', () => {
       expect(byRemaining.has(at)).toBe(false);
       byRemaining.set(at, text);
     }
+  });
+});
+
+// ── formatMinutes ─────────────────────────────────────────────────────────────
+
+describe('formatMinutes', () => {
+  it('converts 300s to 5', () => {
+    expect(formatMinutes(300)).toBe(5);
+  });
+
+  it('converts 900s to 15', () => {
+    expect(formatMinutes(900)).toBe(15);
+  });
+
+  it('converts 1800s to 30', () => {
+    expect(formatMinutes(1800)).toBe(30);
+  });
+
+  it('converts 3600s to 60', () => {
+    expect(formatMinutes(3600)).toBe(60);
+  });
+
+  it('rounds non-exact value (1500s → 25)', () => {
+    expect(formatMinutes(1500)).toBe(25);
   });
 });

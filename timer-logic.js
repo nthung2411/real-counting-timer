@@ -33,10 +33,10 @@ export function getAnnouncement(prev, curr, total) {
     return `Còn ${curr / 60} phút`;
   }
 
-  // Remaining ≤ 60s: every second
+  // Remaining ≤ 60s: every second — just the number for the countdown
   if (curr <= 60 && curr > 0) {
     if (curr === 60) return 'Còn 1 phút';
-    return `Còn ${curr} giây`;
+    return String(curr);
   }
 
   return null;
@@ -51,4 +51,14 @@ export function formatTime(seconds) {
   const m = Math.floor(seconds / 60).toString().padStart(2, '0');
   const s = (seconds % 60).toString().padStart(2, '0');
   return `${m}:${s}`;
+}
+
+/**
+ * Returns the duration in whole minutes (rounded).
+ * Used for start announcements and history display labels.
+ * @param {number} seconds
+ * @returns {number}
+ */
+export function formatMinutes(seconds) {
+  return Math.round(seconds / 60);
 }

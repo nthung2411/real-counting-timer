@@ -26,19 +26,37 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100dvh;
+  user-select: none;
+}
+
+/* ── App layout ──────────────────────────────────────────────────────── */
+
+.app-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 100dvh;
+}
+
+#mainContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh;
   padding: 1.5rem;
   gap: 2rem;
-  user-select: none;
 }
 
-/* ── Header ─────────────────────────────────────────── */
+/* ── Header ──────────────────────────────────────────────────────────── */
+
 header {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 header h1 {
@@ -48,7 +66,8 @@ header h1 {
   color: var(--text-muted);
 }
 
-/* ── Preset buttons ──────────────────────────────────── */
+/* ── Preset buttons ──────────────────────────────────────────────────── */
+
 .presets {
   display: flex;
   gap: 0.6rem;
@@ -79,7 +98,64 @@ header h1 {
   color: #0f172a;
 }
 
-/* ── Circular ring ───────────────────────────────────── */
+/* ── Custom minute input ─────────────────────────────────────────────── */
+
+.custom-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.45rem 1.1rem;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.custom-input-wrapper:focus-within {
+  border-color: var(--teal);
+}
+
+.custom-input-wrapper.active {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
+.custom-input-wrapper.active .custom-input,
+.custom-input-wrapper.active .custom-input-unit {
+  color: #0f172a;
+}
+
+.custom-input {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 0;
+  width: 3.5rem;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.custom-input::-webkit-outer-spin-button,
+.custom-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.custom-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+.custom-input-unit {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* ── Circular ring ───────────────────────────────────────────────────── */
+
 .ring-wrapper {
   position: relative;
   width: var(--ring-size);
@@ -114,7 +190,8 @@ header h1 {
   stroke: var(--danger);
 }
 
-/* ── Time display inside ring ────────────────────────── */
+/* ── Time display inside ring ────────────────────────────────────────── */
+
 .ring-center {
   position: absolute;
   inset: 0;
@@ -148,7 +225,8 @@ header h1 {
   text-transform: uppercase;
 }
 
-/* ── Controls ────────────────────────────────────────── */
+/* ── Controls ────────────────────────────────────────────────────────── */
+
 .controls {
   display: flex;
   gap: 1rem;
@@ -202,20 +280,33 @@ header h1 {
   color: var(--teal);
 }
 
-/* ── Voice toggle ────────────────────────────────────── */
-.voice-toggle {
+/* ── Voice control (labeled pill) ────────────────────────────────────── */
+
+.voice-control {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.55rem 0.85rem;
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
 }
 
-.voice-toggle input[type="checkbox"] {
+.voice-control:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.voice-control input[type="checkbox"] {
   appearance: none;
-  width: 2.4rem;
-  height: 1.4rem;
+  width: 2.2rem;
+  height: 1.3rem;
   background: var(--border);
   border-radius: 9999px;
   position: relative;
@@ -224,27 +315,28 @@ header h1 {
   flex-shrink: 0;
 }
 
-.voice-toggle input[type="checkbox"]:checked {
+.voice-control input[type="checkbox"]:checked {
   background: var(--teal);
 }
 
-.voice-toggle input[type="checkbox"]::after {
+.voice-control input[type="checkbox"]::after {
   content: '';
   position: absolute;
-  top: 0.15rem;
-  left: 0.15rem;
-  width: 1.1rem;
-  height: 1.1rem;
+  top: 0.12rem;
+  left: 0.12rem;
+  width: 1.06rem;
+  height: 1.06rem;
   background: white;
   border-radius: 50%;
   transition: transform 0.2s;
 }
 
-.voice-toggle input[type="checkbox"]:checked::after {
-  transform: translateX(1rem);
+.voice-control input[type="checkbox"]:checked::after {
+  transform: translateX(0.9rem);
 }
 
-/* ── Last announcement banner ────────────────────────── */
+/* ── Last announcement banner ────────────────────────────────────────── */
+
 .announcement {
   min-height: 1.6rem;
   font-size: 0.9rem;
@@ -260,7 +352,8 @@ header h1 {
   opacity: 1;
 }
 
-/* ── Finish overlay ──────────────────────────────────── */
+/* ── Finish overlay ──────────────────────────────────────────────────── */
+
 .finish-overlay {
   display: none;
   position: fixed;
@@ -292,6 +385,186 @@ header h1 {
   font-size: 1rem;
 }
 
+/* ── Voice warning ───────────────────────────────────────────────────── */
+
+.voice-warning {
+  font-size: 0.78rem;
+  color: var(--warning);
+  text-align: center;
+  max-width: 22rem;
+  line-height: 1.5;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(245, 158, 11, 0.07);
+}
+
+/* ── History sidebar (desktop) ───────────────────────────────────────── */
+
+.history-panel {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.history-panel[hidden] {
+  display: none;
+}
+
+.history-backdrop {
+  display: none;
+}
+
+.history-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 1rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.history-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.history-close-btn {
+  width: 2rem;
+  height: 2rem;
+}
+
+.history-list {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  margin: 0.1rem 0.5rem;
+  transition: background 0.12s;
+}
+
+.history-item:hover {
+  background: rgba(20, 184, 166, 0.12);
+}
+
+.history-item:active {
+  background: rgba(20, 184, 166, 0.22);
+}
+
+.history-duration {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.history-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 2rem 1rem;
+  font-style: italic;
+}
+
+.history-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.history-clear-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.history-clear-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ── History bottom-sheet (mobile) ───────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .app-layout {
+    display: block;
+  }
+
+  #mainContent {
+    min-height: 100dvh;
+  }
+
+  .history-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    width: 100%;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .history-panel[hidden] {
+    display: none;
+  }
+
+  .history-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+  }
+
+  .history-sheet {
+    position: relative;
+    z-index: 1;
+    background: var(--surface);
+    border-radius: 1.25rem 1.25rem 0 0;
+    border-top: 1px solid var(--border);
+    max-height: 70vh;
+    height: auto;
+  }
+
+  .history-list {
+    max-height: calc(70vh - 9rem);
+  }
+}
+
+/* ── Small screen tweaks ─────────────────────────────────────────────── */
+
 @media (max-width: 360px) {
   .presets {
     gap: 0.4rem;
@@ -299,5 +572,8 @@ header h1 {
   .preset-btn {
     padding: 0.4rem 0.8rem;
     font-size: 0.85rem;
+  }
+  .custom-input-wrapper {
+    padding: 0.4rem 0.8rem;
   }
 }

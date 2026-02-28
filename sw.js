@@ -1,9 +1,10 @@
-const CACHE_NAME = 'timer-v1';
+const CACHE_NAME = 'timer-v3';
 const ASSETS = [
   '/',
   '/index.html',
   '/style.css',
   '/app.js',
+  '/timer-logic.js',
   '/manifest.json'
 ];
 
