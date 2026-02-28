@@ -2,6 +2,9 @@
 
 A Progressive Web App (PWA) countdown timer with Vietnamese voice announcements. Works offline and can be installed as an app icon on any device.
 
+# Github Page
+https://nthung2411.github.io/real-counting-timer/
+
 ---
 
 ## Features
@@ -17,11 +20,13 @@ A Progressive Web App (PWA) countdown timer with Vietnamese voice announcements.
 | Every 5 minutes elapsed | "Đã qua X phút, còn Y phút" |
 | Remaining ≤ 5 min — each whole minute | "Còn X phút" |
 | Remaining = 60 s | "Còn 1 phút" |
-| Remaining ≤ 59 s — every second | "Còn X giây" |
+| Remaining ≤ 59 s — every second | The number only: "59", "58", … "1" |
 | Timer finishes | "Hết giờ!" |
 
 > Resuming from pause does **not** repeat the start announcement.
-> Voice can be toggled on/off with the speaker button in the controls.
+> Voice can be toggled on/off with the **Giọng nói** labeled toggle in the controls row.
+
+The app explicitly selects a `vi-VN` system voice when available. If no Vietnamese voice is installed on the device, a warning banner is shown with instructions to install the language pack.
 
 ### Timer history
 - Every started timer session is saved to **localStorage** (up to 50 entries).
@@ -53,6 +58,14 @@ Open `http://localhost:3000` in your browser.
 
 > The service worker and PWA install prompt require **HTTPS** or **localhost**.
 > `npx serve` on localhost satisfies this requirement.
+
+### Seeing changes during development
+
+The service worker caches all assets on first load. To force the browser to pick up code changes:
+
+1. Open **DevTools** → **Application** → **Service Workers**
+2. Tick **"Update on reload"** — keeps the cache bypassed while DevTools is open
+3. Or click **Unregister** + hard-refresh (`Ctrl + Shift + R`) for a one-time reset
 
 ---
 
@@ -109,6 +122,12 @@ real-counting-timer/
 
 ## Voice quality note
 
-Vietnamese TTS quality depends on the operating system:
-- **Android** and **macOS / iOS** include native `vi-VN` voices with good quality.
-- **Windows**: install the Vietnamese language pack via *Settings → Time & Language → Language & region → Add a language* to get a native voice. Without it, the browser may fall back to an English voice.
+Vietnamese TTS quality depends on the operating system. The app explicitly selects the best available `vi-VN` voice and shows a warning if none is found.
+
+| Platform | Status |
+|----------|--------|
+| **Android Chrome** | Native `vi-VN` voice included — works out of the box |
+| **macOS / iOS Safari** | Native `vi-VN` voice included — works out of the box |
+| **Windows** | Requires manual install: *Settings → Time & Language → Language & region → Add a language → Vietnamese (Vietnam)* → enable **Text-to-speech**. Refresh the browser after installing. |
+
+Without a native Vietnamese voice the browser falls back to an English voice reading Vietnamese text, which sounds incorrect. The in-app warning banner will guide you if this is the case.
