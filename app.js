@@ -1,3 +1,5 @@
+import { getAnnouncement, formatTime } from './timer-logic.js';
+
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const RING_RADIUS = 150; // must match SVG r attribute
@@ -55,49 +57,7 @@ function showAnnouncement(text) {
   }, 4000);
 }
 
-// ── Announcement logic ────────────────────────────────────────────────────────
-// Returns the Vietnamese announcement string, or null if nothing to say.
-
-function getAnnouncement(prev, curr, total) {
-  // Finished
-  if (curr === 0) return 'Hết giờ!';
-
-  const prevElapsed = total - prev;
-  const currElapsed = total - curr;
-
-  // Every 5-minute elapsed mark (must cross the mark between ticks)
-  // e.g. at 5 min elapsed, 10 min elapsed, etc.
-  for (let mark = 300; mark <= total; mark += 300) {
-    if (prevElapsed < mark && currElapsed >= mark) {
-      const minutesElapsed = Math.round(mark / 60);
-      const minutesLeft = Math.round(curr / 60);
-      if (minutesLeft > 0) {
-        return `Đã qua ${minutesElapsed} phút, còn ${minutesLeft} phút`;
-      }
-    }
-  }
-
-  // Remaining ≤ 5 min (but > 60s): announce on each whole-minute mark
-  if (curr <= 300 && curr > 60 && curr % 60 === 0) {
-    return `Còn ${curr / 60} phút`;
-  }
-
-  // Remaining ≤ 60s: every second
-  if (curr <= 60 && curr > 0) {
-    if (curr === 60) return 'Còn 1 phút';
-    return `Còn ${curr} giây`;
-  }
-
-  return null;
-}
-
 // ── UI helpers ────────────────────────────────────────────────────────────────
-
-function formatTime(seconds) {
-  const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-  const s = (seconds % 60).toString().padStart(2, '0');
-  return `${m}:${s}`;
-}
 
 function updateRing(remaining, total) {
   if (total === 0) {
