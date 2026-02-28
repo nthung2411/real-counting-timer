@@ -1,0 +1,303 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --border: #334155;
+  --teal: #14b8a6;
+  --teal-dim: #0d9488;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --ring-size: min(72vw, 340px);
+  --ring-stroke: 10;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 1.5rem;
+  gap: 2rem;
+  user-select: none;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+header {
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* ── Preset buttons ──────────────────────────────────── */
+.presets {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.preset-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 9999px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.preset-btn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.preset-btn.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #0f172a;
+}
+
+/* ── Circular ring ───────────────────────────────────── */
+.ring-wrapper {
+  position: relative;
+  width: var(--ring-size);
+  height: var(--ring-size);
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: var(--surface);
+  stroke-width: var(--ring-stroke);
+}
+
+.ring-progress {
+  fill: none;
+  stroke: var(--teal);
+  stroke-width: var(--ring-stroke);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.9s linear, stroke 0.3s;
+}
+
+.ring-progress.warning {
+  stroke: var(--warning);
+}
+
+.ring-progress.danger {
+  stroke: var(--danger);
+}
+
+/* ── Time display inside ring ────────────────────────── */
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.time-display {
+  font-size: clamp(2.8rem, 14vw, 5rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.time-display.warning {
+  color: var(--warning);
+}
+
+.time-display.danger {
+  color: var(--danger);
+}
+
+.status-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Controls ────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn-primary {
+  background: var(--teal);
+  color: #0f172a;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.9rem 2.8rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  min-width: 9rem;
+}
+
+.btn-primary:hover {
+  background: var(--teal-dim);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 9999px;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  font-size: 1.1rem;
+}
+
+.btn-icon:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+/* ── Voice toggle ────────────────────────────────────── */
+.voice-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.voice-toggle input[type="checkbox"] {
+  appearance: none;
+  width: 2.4rem;
+  height: 1.4rem;
+  background: var(--border);
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.voice-toggle input[type="checkbox"]:checked {
+  background: var(--teal);
+}
+
+.voice-toggle input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.voice-toggle input[type="checkbox"]:checked::after {
+  transform: translateX(1rem);
+}
+
+/* ── Last announcement banner ────────────────────────── */
+.announcement {
+  min-height: 1.6rem;
+  font-size: 0.9rem;
+  color: var(--teal);
+  text-align: center;
+  font-style: italic;
+  opacity: 0;
+  transition: opacity 0.3s;
+  max-width: 20rem;
+}
+
+.announcement.visible {
+  opacity: 1;
+}
+
+/* ── Finish overlay ──────────────────────────────────── */
+.finish-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.92);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  z-index: 100;
+}
+
+.finish-overlay.visible {
+  display: flex;
+}
+
+.finish-icon {
+  font-size: 4rem;
+}
+
+.finish-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.finish-sub {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+@media (max-width: 360px) {
+  .presets {
+    gap: 0.4rem;
+  }
+  .preset-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
+}

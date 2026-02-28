@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Đồng Hồ Đếm Ngược</title>
+
+  <!-- PWA meta tags -->
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Timer" />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>Đồng Hồ Đếm Ngược</h1>
+  </header>
+
+  <!-- Preset buttons -->
+  <div class="presets" role="group" aria-label="Chọn thời gian">
+    <button class="preset-btn" data-minutes="5">5 phút</button>
+    <button class="preset-btn" data-minutes="15">15 phút</button>
+    <button class="preset-btn" data-minutes="30">30 phút</button>
+    <button class="preset-btn" data-minutes="60">60 phút</button>
+  </div>
+
+  <!-- Circular ring -->
+  <div class="ring-wrapper" aria-hidden="true">
+    <svg class="ring-svg" viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg">
+      <circle class="ring-track"    cx="170" cy="170" r="150" />
+      <circle class="ring-progress" cx="170" cy="170" r="150" id="ringProgress" />
+    </svg>
+    <div class="ring-center">
+      <div class="time-display" id="timeDisplay" aria-live="polite" aria-atomic="true">00:00</div>
+      <div class="status-label" id="statusLabel">Chọn thời gian</div>
+    </div>
+  </div>
+
+  <!-- Last announcement -->
+  <div class="announcement" id="announcement" aria-live="polite"></div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn-icon" id="resetBtn" aria-label="Đặt lại" title="Đặt lại">
+      <!-- reset icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="1 4 1 10 7 10"/>
+        <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+      </svg>
+    </button>
+
+    <button class="btn-primary" id="startPauseBtn" disabled>Bắt đầu</button>
+
+    <label class="btn-icon voice-toggle" title="Âm thanh" aria-label="Bật/tắt giọng nói">
+      <input type="checkbox" id="voiceToggle" checked />
+      <!-- speaker icon -->
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+      </svg>
+    </label>
+  </div>
+
+  <!-- Finish overlay -->
+  <div class="finish-overlay" id="finishOverlay" role="dialog" aria-modal="true" aria-label="Hết giờ">
+    <div class="finish-icon">⏰</div>
+    <div class="finish-text">Hết giờ!</div>
+    <div class="finish-sub">Phiên làm việc đã kết thúc</div>
+    <button class="btn-primary" id="finishDismiss">Đặt lại</button>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
