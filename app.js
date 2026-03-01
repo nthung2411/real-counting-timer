@@ -1,4 +1,5 @@
 import { getAnnouncement, formatTime, formatMinutes } from './timer-logic.js';
+import { STRINGS } from './i18n.js';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -14,7 +15,11 @@ let state = {
   intervalId: null,
   speechEnabled: true,
   isFreshStart: false,  // true when a duration is freshly selected/reset
+  lang: localStorage.getItem('timerLang') || 'vi',
 };
+
+/** Returns the current language's string table. */
+function t() { return STRINGS[state.lang]; }
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 
@@ -36,22 +41,24 @@ const historyCloseBtn   = document.getElementById('historyCloseBtn');
 const historyBackdrop   = document.getElementById('historyBackdrop');
 const historyList       = document.getElementById('historyList');
 const historyClearBtn   = document.getElementById('historyClearBtn');
+const langToggleBtn     = document.getElementById('langToggle');
 
 // ── Speech ───────────────────────────────────────────────────────────────────
 
 let cachedVoice = null;
 
-function findVietnameseVoice() {
+function findVoice() {
+  const lang = t().speechLang;
   const voices = window.speechSynthesis.getVoices();
   return (
-    voices.find(v => v.lang === 'vi-VN') ||
-    voices.find(v => v.lang.startsWith('vi')) ||
+    voices.find(v => v.lang === lang) ||
+    voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
     null
   );
 }
 
 function initVoice() {
-  cachedVoice = findVietnameseVoice();
+  cachedVoice = findVoice();
   const warning = document.getElementById('voiceWarning');
   if (warning) warning.hidden = cachedVoice !== null;
 }
@@ -68,7 +75,7 @@ function speak(text) {
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'vi-VN';
+  utterance.lang = t().speechLang;
   if (cachedVoice) utterance.voice = cachedVoice;
   utterance.rate = 0.95;
   utterance.pitch = 1;
@@ -115,22 +122,85 @@ function renderUI() {
   updateColors(state.remaining);
 
   if (!state.duration) {
-    statusLabel.textContent = 'Chọn thời gian';
+    statusLabel.textContent = t().statusSelect;
+    startPauseBtn.textContent = t().btnStart;
     startPauseBtn.disabled = true;
   } else if (state.isRunning) {
-    statusLabel.textContent = 'Đang chạy';
-    startPauseBtn.textContent = 'Tạm dừng';
+    statusLabel.textContent = t().statusRunning;
+    startPauseBtn.textContent = t().btnPause;
     startPauseBtn.disabled = false;
   } else if (state.remaining === state.duration) {
-    statusLabel.textContent = 'Sẵn sàng';
-    startPauseBtn.textContent = 'Bắt đầu';
+    statusLabel.textContent = t().statusReady;
+    startPauseBtn.textContent = t().btnStart;
     startPauseBtn.disabled = false;
   } else {
-    statusLabel.textContent = 'Tạm dừng';
-    startPauseBtn.textContent = 'Tiếp tục';
+    statusLabel.textContent = t().statusPaused;
+    startPauseBtn.textContent = t().btnResume;
     startPauseBtn.disabled = false;
   }
 }
+
+// ── Language switching ────────────────────────────────────────────────────────
+
+function applyLang(lang) {
+  state.lang = lang;
+  localStorage.setItem('timerLang', lang);
+  document.documentElement.lang = lang;
+  document.title = t().title;
+
+  // Toggle button shows the opposite language code
+  langToggleBtn.textContent = lang === 'vi' ? 'EN' : 'VI';
+
+  // Header
+  document.querySelector('h1').textContent = t().title;
+
+  // History panel
+  historyPanel.setAttribute('aria-label', t().historyAriaLabel);
+  document.querySelector('.history-title').textContent = t().historyTitle;
+  historyCloseBtn.setAttribute('aria-label', t().historyCloseLabel);
+  historyList.setAttribute('aria-label', t().historyListAriaLabel);
+  historyClearBtn.textContent = t().historyClear;
+
+  // History toggle icon button
+  historyToggleBtn.setAttribute('aria-label', t().historyToggleLabel);
+  historyToggleBtn.setAttribute('title', t().historyToggleLabel);
+
+  // Presets
+  document.querySelector('.presets').setAttribute('aria-label', t().presetsAriaLabel);
+  presetBtns.forEach(btn => {
+    btn.textContent = `${btn.dataset.minutes} ${t().unitMin}`;
+  });
+
+  // Custom input
+  customMinutesInput.placeholder = t().customPlaceholder;
+  customMinutesInput.setAttribute('aria-label', t().customAriaLabel);
+  document.querySelector('.custom-input-unit').textContent = t().unitMin;
+
+  // Controls
+  resetBtn.setAttribute('aria-label', t().resetLabel);
+  resetBtn.setAttribute('title', t().resetLabel);
+  document.querySelector('.voice-label').textContent = t().voiceLabel;
+
+  // Voice warning (innerHTML because it may contain <strong>)
+  document.getElementById('voiceWarning').innerHTML = t().voiceWarning;
+
+  // Finish overlay
+  document.querySelector('.finish-text').textContent = t().finishTitle;
+  document.querySelector('.finish-sub').textContent = t().finishSub;
+  finishDismiss.textContent = t().finishDismiss;
+  finishOverlay.setAttribute('aria-label', t().finishAriaLabel);
+
+  // Re-init voice for the new speech language
+  initVoice();
+
+  // Refresh dynamic UI
+  renderUI();
+  renderHistory();
+}
+
+langToggleBtn.addEventListener('click', () => {
+  applyLang(state.lang === 'vi' ? 'en' : 'vi');
+});
 
 // ── History ───────────────────────────────────────────────────────────────────
 
@@ -164,7 +234,7 @@ function clearHistory() {
 function renderHistory() {
   const entries = loadHistory();
   if (entries.length === 0) {
-    historyList.innerHTML = '<li class="history-empty">Chưa có lịch sử</li>';
+    historyList.innerHTML = `<li class="history-empty">${t().historyEmpty}</li>`;
     return;
   }
   historyList.innerHTML = entries.map(e => {
@@ -176,8 +246,8 @@ function renderHistory() {
     const mi = String(d.getMinutes()).padStart(2, '0');
     return `<li class="history-item" role="option"
               data-id="${e.id}" data-duration="${e.duration}"
-              tabindex="0" aria-label="${mins} phút, ${dd}/${mm} ${hh}:${mi}">
-      <span class="history-duration">${mins} phút</span>
+              tabindex="0" aria-label="${mins} ${t().unitMin}, ${dd}/${mm} ${hh}:${mi}">
+      <span class="history-duration">${mins} ${t().unitMin}</span>
       <span class="history-date">${dd}/${mm} ${hh}:${mi}</span>
     </li>`;
   }).join('');
@@ -282,7 +352,7 @@ function tick() {
   const prev = state.remaining;
   state.remaining = Math.max(0, state.remaining - 1);
 
-  const text = getAnnouncement(prev, state.remaining, state.duration);
+  const text = getAnnouncement(prev, state.remaining, state.duration, state.lang);
   if (text) speak(text);
 
   renderUI();
@@ -297,7 +367,7 @@ function startTimer() {
   if (!state.duration || state.remaining === 0) return;
 
   if (state.isFreshStart) {
-    speak(`Bắt đầu tính thời gian cho ${formatMinutes(state.duration)} phút`);
+    speak(t().announceStart(formatMinutes(state.duration)));
     addHistoryEntry(state.duration);
     state.isFreshStart = false;
   }
@@ -362,8 +432,7 @@ finishDismiss.addEventListener('click', resetTimer);
 
 ringProgress.style.strokeDasharray = CIRCUMFERENCE;
 ringProgress.style.strokeDashoffset = 0;
-renderUI();
-renderHistory();
+applyLang(state.lang); // sets all UI strings, calls renderUI + renderHistory
 
 // Initialise voice on first interaction (iOS requires this)
 document.addEventListener('click', () => {

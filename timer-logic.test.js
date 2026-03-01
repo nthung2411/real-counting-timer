@@ -250,6 +250,36 @@ describe('getAnnouncement — full timer simulation', () => {
   });
 });
 
+// ── getAnnouncement — English language ───────────────────────────────────────
+
+describe('getAnnouncement — English (lang="en")', () => {
+  it('returns "Time\'s up!" when curr is 0', () => {
+    expect(getAnnouncement(1, 0, 300, 'en')).toBe("Time's up!");
+  });
+
+  it('fires elapsed mark in English', () => {
+    expect(getAnnouncement(3301, 3300, 3600, 'en')).toBe('5 minutes elapsed, 55 left');
+  });
+
+  it('announces minutes remaining in English', () => {
+    expect(getAnnouncement(241, 240, 300, 'en')).toBe('4 minutes left');
+    expect(getAnnouncement(121, 120, 300, 'en')).toBe('2 minutes left');
+  });
+
+  it('announces "1 minute left" at 60s in English', () => {
+    expect(getAnnouncement(61, 60, 3600, 'en')).toBe('1 minute left');
+  });
+
+  it('announces plain numbers for final countdown in English', () => {
+    expect(getAnnouncement(60, 59, 3600, 'en')).toBe('59');
+    expect(getAnnouncement(2, 1, 3600, 'en')).toBe('1');
+  });
+
+  it('returns null mid-timer in English', () => {
+    expect(getAnnouncement(500, 499, 3600, 'en')).toBeNull();
+  });
+});
+
 // ── formatMinutes ─────────────────────────────────────────────────────────────
 
 describe('formatMinutes', () => {

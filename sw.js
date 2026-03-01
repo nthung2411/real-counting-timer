@@ -5,6 +5,7 @@ const ASSETS = [
   '/style.css',
   '/app.js',
   '/timer-logic.js',
+  '/i18n.js',
   '/manifest.json'
 ];
 
